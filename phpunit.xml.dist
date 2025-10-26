@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Furan. All rights reserved.
+ */
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         colors="true"
+         columns="max"
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         bootstrap="./framework/bootstrap.php"
+         stderr="true">
+    <testsuites>
+        <testsuite name="Furan ReadWriteSplit Unit Tests">
+            <directory>./Test/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <coverage>
+        <include>
+            <directory suffix=".php">./</directory>
+        </include>
+        <exclude>
+            <directory>./Test</directory>
+            <directory>./vendor</directory>
+        </exclude>
+    </coverage>
+    <php>
+        <ini name="date.timezone" value="America/Los_Angeles"/>
+        <ini name="xdebug.max_nesting_level" value="200"/>
+    </php>
+</phpunit>

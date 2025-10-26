@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Framework\DB\Adapter\Pdo\Mysql" type="Furan\ReadWriteSplit\DB\Adapter\ReadWriteSplit" />
+
+    <!-- Inject our custom deployment config into ResourceConnection -->
+    <type name="Magento\Framework\App\ResourceConnection">
+        <arguments>
+            <argument name="deploymentConfig" xsi:type="object">Furan\ReadWriteSplit\App\DeploymentConfig</argument>
+        </arguments>
+    </type>
+</config>
