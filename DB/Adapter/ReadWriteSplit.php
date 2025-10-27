@@ -44,6 +44,11 @@ class ReadWriteSplit extends Mysql
     protected $isReader = false;
 
     /**
+     * @var bool
+     */
+    private static $hasWrittenInRequest = false;
+
+    /**
      * @var SerializerInterface
      */
     protected $serializer;
@@ -126,20 +131,36 @@ class ReadWriteSplit extends Mysql
 
     public function query($sql, $bind = [])
     {
-        if ($this->isReader || !$this->shouldUseReadConnection($sql)) {
-            return parent::query($sql, $bind);
+        $shouldUseReader = !self::$hasWrittenInRequest
+            && !$this->isReader
+            && $this->shouldUseReadConnection($sql);
+
+        if ($shouldUseReader) {
+            return $this->executeOnReader($sql, $bind, 'query');
         }
 
-        return $this->executeOnReader($sql, $bind, 'query');
+        if (!$this->isReader) {
+            self::$hasWrittenInRequest = true;
+        }
+
+        return parent::query($sql, $bind);
     }
 
     public function multiQuery($sql, $bind = [])
     {
-        if ($this->isReader || !$this->shouldUseReadConnection($sql)) {
-            return parent::multiQuery($sql, $bind);
+        $shouldUseReader = !self::$hasWrittenInRequest
+            && !$this->isReader
+            && $this->shouldUseReadConnection($sql);
+
+        if ($shouldUseReader) {
+            return $this->executeOnReader($sql, $bind, 'multiQuery');
         }
 
-        return $this->executeOnReader($sql, $bind, 'multiQuery');
+        if (!$this->isReader) {
+            self::$hasWrittenInRequest = true;
+        }
+
+        return parent::multiQuery($sql, $bind);
     }
 
     private static function isReadOnlyStatement(string $sqlLowercase): bool
@@ -238,6 +259,10 @@ class ReadWriteSplit extends Mysql
 
     private function shouldUseReadConnection($sql): bool
     {
+        if (self::$hasWrittenInRequest) {
+            return false;
+        }
+
         if ($this->isReader || $this->inTransaction) {
             return false;
         }
