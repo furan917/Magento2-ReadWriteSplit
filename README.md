@@ -78,6 +78,10 @@ Add reader connection configurations to `app/etc/env.php`:
 - Failed reader connections automatically fall back to master
 - Round-robin load balancing across active readers
 
+## Sticky Writer (intentional)
+
+Once any write occurs in a request, all subsequent reads in that same request are pinned to the master. This is deliberate, not a bug. Magento commonly writes an entity and immediately reads it back in the same request (e.g. saving a product then loading it to build the redirect URL in admin). A read replica that has not yet caught up via replication would return stale data or no row at all, causing redirects to 404s, missing form data, or broken admin flows. Pinning to master after the first write trades a small amount of read offload for correctness.
+
 ## Disabling Readers
 
 Set `'active' => '0'` for any reader connection to temporarily disable it without removing the configuration.

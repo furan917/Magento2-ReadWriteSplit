@@ -263,7 +263,7 @@ class ReadWriteSplit extends Mysql
             return false;
         }
 
-        if ($this->isReader || $this->inTransaction) {
+        if ($this->isReader || $this->inTransaction || $this->getTransactionLevel() > 0) {
             return false;
         }
 
