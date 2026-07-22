@@ -79,7 +79,7 @@ class ReadWriteSplit extends Mysql
         LoggerInterface $logger,
         SelectFactory $selectFactory,
         array $config = [],
-        SerializerInterface $serializer = null
+        ?SerializerInterface $serializer = null
     ) {
         $this->stringUtils = $string;
         $this->dateTime = $dateTime;
